@@ -172,10 +172,10 @@ public class DynamicUIActivity extends AppCompatActivity {
                         break;
                 } else if (viewArrayList.get(i) instanceof Spinner) {
                     Spinner spinner = (Spinner) viewArrayList.get(i);
-                    String value = (String) spinner.getSelectedItem();
+                    int value =  spinner.getSelectedItemPosition();
                     if(spinner.getTag().equals(f.getFieldName())) {
-                        if (TextUtils.isEmpty(value) && f.isRequired()) {
-                            Toast.makeText(this,"The field is required",Toast.LENGTH_SHORT).show();
+                        if (value==0 ) {
+                            Toast.makeText(this,"Please select data",Toast.LENGTH_SHORT).show();
                             isTrue=false;
                             break;
 
@@ -249,6 +249,7 @@ public class DynamicUIActivity extends AppCompatActivity {
         //Sample String ArrayList
         linearLayout1.setLayoutParams(layoutParams);
         spinner.setLayoutParams(layoutParams1);
+        fields.getOptions().add(0,"Select value from drop down");
         ArrayAdapter<String> adp = new ArrayAdapter<String> (this,android.R.layout.simple_spinner_dropdown_item,fields.getOptions());
         spinner.setAdapter(adp);
 

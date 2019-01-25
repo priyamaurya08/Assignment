@@ -33,7 +33,7 @@ public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecy
         if(list.get(i).getField1()!=null &&!TextUtils.isEmpty(list.get(i).getField1().getKey())){
             viewHolder.field1.setVisibility(View.VISIBLE);
             viewHolder.val1.setVisibility(View.VISIBLE);
-            viewHolder.field1.setText(list.get(i).getField1().getKey());
+            viewHolder.field1.setText(list.get(i).getField1().getKey().substring(0,1)+list.get(i).getField1().getKey().substring(1));
             viewHolder.val1.setText(list.get(i).getField1().getValue());
         }else {
             viewHolder.field1.setVisibility(View.GONE);
@@ -44,7 +44,7 @@ public class ReportsRecyclerViewAdapter extends RecyclerView.Adapter<ReportsRecy
         if(list.get(i).getField2()!=null && !TextUtils.isEmpty(list.get(i).getField2().getKey())){
             viewHolder.field2.setVisibility(View.VISIBLE);
             viewHolder.val2.setVisibility(View.VISIBLE);
-            viewHolder.field2.setText(list.get(i).getField2().getKey());
+            viewHolder.field2.setText(list.get(i).getField2().getKey().substring(0,1)+list.get(i).getField2().getKey().substring(1));
             viewHolder.val2.setText(list.get(i).getField2().getValue());
         }else {
             viewHolder.field2.setVisibility(View.GONE);
