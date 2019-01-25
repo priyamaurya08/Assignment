@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Assignmen</string>
+    <string name="total_reports">Total Reports</string>
+    <string name="total_reports_tetx">Total Reports: </string>
+
+    <string name="add">ADD</string>
+    <string name="done">Done</string>
+</resources>
