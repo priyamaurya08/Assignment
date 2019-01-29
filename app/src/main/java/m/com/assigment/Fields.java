@@ -86,7 +86,17 @@ public class Fields implements Parcelable {
         this.options = options;
     }
 
+    public List<Fields> getFields() {
+        return fields;
+    }
 
+    public void setFields(List<Fields> fields) {
+        this.fields = fields;
+    }
+
+    @SerializedName("fields")
+    @Expose
+    private List<Fields> fields=new ArrayList<>();
 
 
 
@@ -102,6 +112,12 @@ public class Fields implements Parcelable {
         min = in.readInt();
         max = in.readInt();
         required = in.readByte() != 0x00;
+        if (in.readByte() == 0x01) {
+            fields = new ArrayList<Fields>();
+            in.readList(fields, Fields.class.getClassLoader());
+        } else {
+            fields = null;
+        }
     }
 
     @Override
@@ -122,6 +138,12 @@ public class Fields implements Parcelable {
         dest.writeInt(min);
         dest.writeInt(max);
         dest.writeByte((byte) (required ? 0x01 : 0x00));
+        if (fields == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(fields);
+        }
     }
 
     @SuppressWarnings("unused")
