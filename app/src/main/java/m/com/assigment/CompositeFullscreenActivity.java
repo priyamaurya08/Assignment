@@ -19,19 +19,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-public class DynamicUIActivity extends AppCompatActivity {
+public class CompositeFullscreenActivity extends AppCompatActivity {
+    private Fields inoutMode;
 
-    private String TAG="DynamicUIActivity";
-    private InputModel inoutMode;
+    private String TAG ="CompositeFullscreenActivity" ;
 
     private LinearLayout linearLayout;
 
@@ -41,25 +39,25 @@ public class DynamicUIActivity extends AppCompatActivity {
 
     private ArrayList<View> viewArrayList =new ArrayList<>();
 
-    private ArrayList<View> viewArrayListComposite =new ArrayList<>();
-
     private ArrayList<Spinner> spinnerList=new ArrayList<>();
 
     private ArrayList<String> values=new ArrayList<>();
 
-    private  EditText editText;
+    private EditText editText;
+
+    private Button button;
 
     private boolean isTrue=true;
 
     final JSONObject jsonObject = new JSONObject();
 
-    Button button;
-    JSONObject jsonObjectLocal ;
+    JSONObject jsonObjectLocal = new JSONObject();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dynamic_ui);
+        setContentView(R.layout.activity_composite_fullscreen);
 
         done=findViewById(R.id.done);
 
@@ -81,7 +79,7 @@ public class DynamicUIActivity extends AppCompatActivity {
 
 
         linearLayout= (LinearLayout) findViewById(R.id.container);
-        for (Fields f: inoutMode.getData()) {
+        for (Fields f: inoutMode.getFields()) {
             if (f.getType().equals("text")) {
                 setLabel(f.getFieldName());
                 setEditText(f);
@@ -100,7 +98,7 @@ public class DynamicUIActivity extends AppCompatActivity {
             }else if (f.getType().equals("composite")) {
                 setLabel(f.getFieldName());
                 setAddButton(f);
-                            //setComposite(f);
+                //setComposite(f);
                 //create a button similarly as above,and add it to the layout
             }
 
@@ -109,10 +107,11 @@ public class DynamicUIActivity extends AppCompatActivity {
 
 
         done.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
-               // Log.v(TAG, String.valueOf(isValid()));
+                // Log.v(TAG, String.valueOf(isValid()));
                 if (isValid()) {
                     for (int i = 0; i < viewArrayList.size(); i++) {
                         if (viewArrayList.get(i) instanceof EditText) {
@@ -132,6 +131,7 @@ public class DynamicUIActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+
                         }else if (viewArrayList.get(i) instanceof Button) {
                             try {
                                 if(jsonObjectLocal!=null){
@@ -142,6 +142,7 @@ public class DynamicUIActivity extends AppCompatActivity {
                             }
 
                         }
+
                     }
 
                     Log.v(TAG, jsonObject.toString());
@@ -157,61 +158,60 @@ public class DynamicUIActivity extends AppCompatActivity {
 
     }
 
-
     public boolean isValid(){
-        for (Fields f: inoutMode.getData()) {
+        for (Fields f: inoutMode.getFields()) {
             for (int i = 0; i < viewArrayList.size(); i++) {
                 if (viewArrayList.get(i) instanceof EditText) {
                     EditText editText = (EditText) viewArrayList.get(i);
 
-                    if(editText.getTag().equals(f.getFieldName())) {
+                    if (editText.getTag().equals(f.getFieldName())) {
                         if (TextUtils.isEmpty(editText.getText().toString()) && f.isRequired()) {
-                            Log.v(TAG, String.valueOf(editText.getTag()));
-                            Toast.makeText(this,"The "+f.getFieldName()+" is required",Toast.LENGTH_SHORT).show();
-                            isTrue=false;
+                            //Log.v(TAG, String.valueOf(editText.getTag()));
+                            Toast.makeText(this, "The " + f.getFieldName() + " is required", Toast.LENGTH_SHORT).show();
+                            isTrue = false;
                             break;
-                        }else {
-                            isTrue=true;
+                        } else {
+                            isTrue = true;
 
                         }
 
-                        if(editText.getTag().equals("number")) {
+                        if (editText.getTag().equals("number")) {
                             if (f.getMin() != 0 && Integer.parseInt(editText.getText().toString()) < f.getMin()) {
-                                Toast.makeText(this, "The value in "+f.getFieldName()+" is less then minimum value", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "The value in " + f.getFieldName() + " is less then minimum value", Toast.LENGTH_SHORT).show();
                                 isTrue = false;
                                 break;
-                            }else {
-                                isTrue=true;
+                            } else {
+                                isTrue = true;
 
                             }
                             if (f.getMax() != 0 && Integer.parseInt(editText.getText().toString()) > f.getMax()) {
-                                Toast.makeText(this, "The value in "+f.getFieldName()+"is less then maximum value", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "The value in " + f.getFieldName() + "is less then maximum value", Toast.LENGTH_SHORT).show();
                                 isTrue = false;
                                 break;
-                            }else {
-                                isTrue=true;
+                            } else {
+                                isTrue = true;
 
                             }
                         }
                     }
-                    if(!isTrue)
+                    if (!isTrue)
                         break;
                 } else if (viewArrayList.get(i) instanceof Spinner) {
                     Spinner spinner = (Spinner) viewArrayList.get(i);
-                    int value =  spinner.getSelectedItemPosition();
-                    if(spinner.getTag().equals(f.getFieldName())) {
-                        if (value==0 ) {
-                            Toast.makeText(this,"Please select data in "+f.getFieldName(),Toast.LENGTH_SHORT).show();
-                            isTrue=false;
+                    int value = spinner.getSelectedItemPosition();
+                    if (spinner.getTag().equals(f.getFieldName())) {
+                        if (value == 0) {
+                            Toast.makeText(this, "Please select data in " + f.getFieldName(), Toast.LENGTH_SHORT).show();
+                            isTrue = false;
                             break;
 
-                        }else {
-                            isTrue=true;
+                        } else {
+                            isTrue = true;
 
                         }
                     }
 
-                    if(!isTrue)
+                    if (!isTrue)
                         break;
                 }else if(viewArrayList.get(i) instanceof Button ){
                     Log.v(TAG, String.valueOf(f.getType()));
@@ -236,10 +236,14 @@ public class DynamicUIActivity extends AppCompatActivity {
                 break;
         }
         if(isTrue)
-           return true;
+            return true;
         else
             return false;
     }
+
+
+
+
 
     public void setLabel(String labelName){
         TextView txtView = new TextView(this);
@@ -249,8 +253,6 @@ public class DynamicUIActivity extends AppCompatActivity {
         txtView.setLayoutParams(layoutParams);
         linearLayout.addView(txtView);
     }
-
-
 
     public void setEditText(Fields fields){
 
@@ -277,11 +279,8 @@ public class DynamicUIActivity extends AppCompatActivity {
         viewArrayList.add(editText);
         linearLayout.addView(editText);
     }
-
     public void setAddButton(final Fields fields){
-        button=new Button(this);
-
-        editText= new EditText(this);
+         button=new Button(this);
         button.setLayoutParams(layoutParams);
         button.setText("ADD "+fields.getFieldName());
         button.setTag(fields.getFieldName());
@@ -289,7 +288,7 @@ public class DynamicUIActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i=new Intent(DynamicUIActivity.this,CompositeFullscreenActivity.class);
+                Intent i=new Intent(CompositeFullscreenActivity.this,CompositeFullscreenActivity.class);
                 i.putExtra("json",fields);
                 startActivityForResult(i,1);
             }
@@ -297,44 +296,6 @@ public class DynamicUIActivity extends AppCompatActivity {
         viewArrayList.add(button);
         linearLayout.addView(button);
     }
-
-
-    public void setLabelComposite(String labelName,String value){
-        TextView txtView = new TextView(this);
-        txtView.setText(labelName.substring(0,1).toUpperCase()+labelName.substring(1)+":" +value);
-        txtView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        txtView.setTextSize(14);
-        txtView.setLayoutParams(layoutParams);
-        linearLayout.addView(txtView);
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK) {
-            if (requestCode == 1) {
-                String json = data.getStringExtra("json");
-                Log.v("TAG", json);
-                try {
-                    jsonObjectLocal = new JSONObject(json);
-
-                    Iterator<String> keys= jsonObjectLocal.keys();
-                    while (keys.hasNext()) {
-                        String keyValue = (String) keys.next();
-                            if (!TextUtils.isEmpty(jsonObjectLocal.getString(String.valueOf(jsonObjectLocal.names().get(0))))) {
-                                setLabelComposite(keyValue,jsonObjectLocal.getString(String.valueOf(jsonObjectLocal.names().get(0))));
-                            }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-}
 
     public void setSpinner(Fields fields){
         LinearLayout linearLayout1=new LinearLayout(this);
@@ -360,5 +321,21 @@ public class DynamicUIActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
+            if (requestCode == 1) {
+                String json = data.getStringExtra("json");
+                Log.v("TAG", json);
+                try {
+                    jsonObjectLocal = new JSONObject(json);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }
